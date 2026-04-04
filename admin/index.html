@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – Petronije</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #111111;
+      --dark:   #1a1a1a;
+      --dark2:  #222222;
+      --dark3:  #2c2c2c;
+      --border: #333333;
+      --muted:  #888888;
+      --text:   #e0e0e0;
+      --white:  #f4f4f4;
+      --blue:   #1a6bcc;
+      --blue2:  #2278e0;
+      --red:    #e05252;
+      --green:  #4caf7d;
+      --radius: 4px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Login ── */
+    .login-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .login-box {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .login-logo .brand {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--white);
+    }
+
+    .login-logo .sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .login-box h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .field input, .field select, .field textarea {
+      width: 100%;
+      background: var(--dark2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    .field textarea { resize: vertical; min-height: 72px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn-primary:hover { filter: brightness(1.1); }
+    .btn-outline { background: transparent; color: var(--text); border-color: var(--border); }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-danger { background: transparent; color: var(--red); border-color: rgba(224,82,82,0.4); }
+    .btn-danger:hover { background: rgba(224,82,82,0.08); }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+    .btn-full { width: 100%; justify-content: center; }
+
+    .error-msg {
+      background: rgba(224,82,82,0.12);
+      border: 1px solid rgba(224,82,82,0.3);
+      color: #f08080;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .success-msg {
+      background: rgba(76,175,125,0.12);
+      border: 1px solid rgba(76,175,125,0.3);
+      color: #7fcea0;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* ── Admin Shell ── */
+    .admin-shell { display: none; }
+
+    .admin-header {
+      background: #001e50;
+      border-bottom: 1px solid #0a2d6e;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-header .brand {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--white);
+    }
+
+    .admin-header .brand span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 10px;
+    }
+
+    .admin-body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── Form Panel ── */
+    .form-panel {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .form-panel h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* ── Parts Table ── */
+    .parts-panel h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .parts-count {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-left: 8px;
+    }
+
+    .admin-search {
+      width: 100%;
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+      transition: border-color 0.15s;
+    }
+
+    .admin-search:focus { outline: none; border-color: var(--blue); }
+
+    .parts-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .admin-part-row {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: border-color 0.15s;
+    }
+
+    .admin-part-row:hover { border-color: #444; }
+    .admin-part-row.editing { border-color: var(--blue); }
+
+    .part-info { flex: 1; min-width: 0; }
+
+    .part-info-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .part-info-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .part-info-meta .cena {
+      color: var(--blue);
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .part-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .no-parts {
+      text-align: center;
+      padding: 48px 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .slika-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .slika-tab {
+      flex: 1;
+      padding: 7px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--dark2);
+      color: var(--muted);
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: 0.15s;
+    }
+
+    .slika-tab.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .upload-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--dark2);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .upload-label:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    @media (max-width: 800px) {
+      .admin-body {
+        grid-template-columns: 1fr;
+      }
+      .form-panel { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-wrap" id="loginWrap">
+    <div class="login-box">
+      <div class="login-logo">
+        <img src="/logo_white.png" alt="Petronije logo" style="width:64px;height:64px;object-fit:contain;margin-bottom:12px;" />
+        <div class="brand">PETRONIJE</div>
+        <div class="sub">Admin panel</div>
+      </div>
+      <div class="error-msg" id="loginError"></div>
+      <div class="field">
+        <label>Lozinka</label>
+        <input type="password" id="loginPassword" placeholder="Unesite lozinku..." autocomplete="current-password" />
+      </div>
+      <button class="btn btn-primary btn-full" id="loginBtn">Prijavi se</button>
+    </div>
+  </div>
+
+  <!-- ADMIN SHELL -->
+  <div class="admin-shell" id="adminShell">
+    <div class="admin-header">
+      <div class="brand">PETRONIJE <span>Admin panel</span></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a href="/" class="btn btn-sm btn-outline">← Sajt</a>
+        <button class="btn btn-sm btn-outline" id="logoutBtn">Odjavi se</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+      <!-- Form Panel -->
+      <div class="form-panel">
+        <h3 id="formTitle">Dodaj novi deo</h3>
+        <div class="error-msg" id="formError"></div>
+        <div class="success-msg" id="formSuccess"></div>
+
+        <input type="hidden" id="editId" />
+
+        <div class="form-row">
+          <div class="field">
+            <label>Marka *</label>
+            <input type="text" id="fMarka" placeholder="npr. VW" />
+          </div>
+          <div class="field">
+            <label>Model *</label>
+            <input type="text" id="fModel" placeholder="npr. Touran" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Naziv dela *</label>
+          <input type="text" id="fNaziv" placeholder="npr. Prednji amortizer" />
+        </div>
+
+        <div class="field">
+          <label>Cena</label>
+          <input type="text" id="fCena" placeholder="npr. 4.500 RSD" />
+        </div>
+
+        <div class="field">
+          <label>Opis</label>
+          <textarea id="fOpis" placeholder="Kratak opis dela..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Slika</label>
+          <div class="slika-tabs">
+            <button type="button" class="slika-tab active" id="tabUrl">Link (URL)</button>
+            <button type="button" class="slika-tab" id="tabUpload">Uploaduj sa telefona</button>
+          </div>
+          <div id="slikaUrlWrap">
+            <input type="url" id="fSlika" placeholder="https://..." />
+          </div>
+          <div id="slikaUploadWrap" style="display:none;">
+            <label class="upload-label">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span id="uploadLabelText">Odaberi sliku</span>
+            </label>
+            <input type="file" id="fSlikaFile" accept="image/*" style="display:none;" />
+            <div id="imgPreview" style="display:none;margin-top:8px;">
+              <img id="imgPreviewEl" src="" alt="Preview" style="max-width:100%;max-height:140px;border-radius:4px;border:1px solid #333;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" id="saveBtn">Sačuvaj</button>
+          <button class="btn btn-outline" id="cancelBtn" style="display:none;">Otkaži</button>
+        </div>
+      </div>
+
+      <!-- Parts List -->
+      <div class="parts-panel">
+        <h3>Svi delovi <span class="parts-count" id="partsCount"></span></h3>
+        <input class="admin-search" id="adminSearch" type="text" placeholder="Pretraži delove..." />
+        <div class="parts-list" id="adminPartsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let token = sessionStorage.getItem('petronije_token');
+    let editingId = null;
+    let allParts = [];
+
+    // ── Auth ──────────────────────────────────────────────────────────────────
+
+    function showAdmin() {
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('adminShell').style.display = 'block';
+      loadParts();
+    }
+
+    function showLogin() {
+      document.getElementById('loginWrap').style.display = 'flex';
+      document.getElementById('adminShell').style.display = 'none';
+    }
+
+    if (token) showAdmin();
+
+    document.getElementById('loginPassword').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const pw = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+
+      if (!pw) { errEl.textContent = 'Unesite lozinku.'; errEl.style.display = 'block'; return; }
+
+      const btn = document.getElementById('loginBtn');
+      btn.textContent = 'Prijavljivanje...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: pw })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errEl.textContent = data.error || 'Greška pri prijavi.';
+          errEl.style.display = 'block';
+        } else {
+          token = data.token;
+          sessionStorage.setItem('petronije_token', token);
+          showAdmin();
+        }
+      } catch (e) {
+        errEl.textContent = 'Greška u konekciji.';
+        errEl.style.display = 'block';
+      } finally {
+        btn.textContent = 'Prijavi se';
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/admin/logout', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      token = null;
+      sessionStorage.removeItem('petronije_token');
+      showLogin();
+    });
+
+    // ── Load parts ────────────────────────────────────────────────────────────
+
+    async function loadParts() {
+      try {
+        const res = await fetch('/api/parts');
+        allParts = await res.json();
+        renderPartsList(allParts);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function renderPartsList(parts) {
+      const list = document.getElementById('adminPartsList');
+      const count = document.getElementById('partsCount');
+      count.textContent = `(${parts.length})`;
+
+      if (!parts.length) {
+        list.innerHTML = '<div class="no-parts">Nema delova.</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      for (const p of parts) {
+        const row = document.createElement('div');
+        row.className = 'admin-part-row' + (editingId === p.id ? ' editing' : '');
+        row.dataset.id = p.id;
+        row.innerHTML = `
+          <div class="part-info">
+            <div class="part-info-name">${esc(p.naziv)}</div>
+            <div class="part-info-meta">
+              ${esc(p.marka)} ${esc(p.model)}
+              ${p.cena ? `<span class="cena">${esc(p.cena)}</span>` : ''}
+            </div>
+          </div>
+          <div class="part-actions">
+            <button class="btn btn-sm btn-outline edit-btn" data-id="${p.id}">Izmeni</button>
+            <button class="btn btn-sm btn-danger delete-btn" data-id="${p.id}">Briši</button>
+          </div>
+        `;
+        list.appendChild(row);
+      }
+
+      list.querySelectorAll('.edit-btn').forEach(btn =>
+        btn.addEventListener('click', () => startEdit(parseInt(btn.dataset.id)))
+      );
+      list.querySelectorAll('.delete-btn').forEach(btn =>
+        btn.addEventListener('click', () => deletePart(parseInt(btn.dataset.id)))
+      );
+    }
+
+    // ── Search ────────────────────────────────────────────────────────────────
+
+    document.getElementById('adminSearch').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      const filtered = allParts.filter(p =>
+        p.naziv.toLowerCase().includes(q) ||
+        p.marka.toLowerCase().includes(q) ||
+        p.model.toLowerCase().includes(q)
+      );
+      renderPartsList(filtered);
+    });
+
+    // ── Slika tabovi i upload ─────────────────────────────────────────────────
+
+    let uploadMode = false;
+
+    document.getElementById('tabUrl').addEventListener('click', () => {
+      uploadMode = false;
+      document.getElementById('tabUrl').classList.add('active');
+      document.getElementById('tabUpload').classList.remove('active');
+      document.getElementById('slikaUrlWrap').style.display = '';
+      document.getElementById('slikaUploadWrap').style.display = 'none';
+    });
+
+    document.getElementById('tabUpload').addEventListener('click', () => {
+      uploadMode = true;
+      document.getElementById('tabUpload').classList.add('active');
+      document.getElementById('tabUrl').classList.remove('active');
+      document.getElementById('slikaUploadWrap').style.display = '';
+      document.getElementById('slikaUrlWrap').style.display = 'none';
+    });
+
+    document.getElementById('fSlikaFile').addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      document.getElementById('uploadLabelText').textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('imgPreviewEl').src = e.target.result;
+        document.getElementById('imgPreview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('fSlikaFile').addEventListener('click', () => {});
+    document.querySelector('.upload-label').addEventListener('click', () => {
+      document.getElementById('fSlikaFile').click();
+    });
+
+    async function uploadSlika() {
+      const file = document.getElementById('fSlikaFile').files[0];
+      if (!file) return '';
+      const fd = new FormData();
+      fd.append('slika', file);
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: fd
+      });
+      if (!res.ok) {
+        let msg = 'Upload slike nije uspeo (' + res.status + ')';
+        try { const d = await res.json(); if (d.error) msg = d.error; } catch {}
+        throw new Error(msg);
+      }
+      const data = await res.json();
+      return data.url;
+    }
+
+    // ── Save part ─────────────────────────────────────────────────────────────
+
+    document.getElementById('saveBtn').addEventListener('click', savePart);
+
+    async function savePart() {
+      const errEl = document.getElementById('formError');
+      const sucEl = document.getElementById('formSuccess');
+      errEl.style.display = 'none';
+      sucEl.style.display = 'none';
+
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Čuvanje...';
+
+      let slikaUrl = document.getElementById('fSlika').value.trim();
+
+      if (uploadMode && document.getElementById('fSlikaFile').files[0]) {
+        try {
+          btn.textContent = 'Upload slike...';
+          slikaUrl = await uploadSlika();
+        } catch (e) {
+          errEl.textContent = 'Greška pri uploadu slike: ' + e.message;
+          errEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sačuvaj';
+          return;
+        }
+      }
+
+      const payload = {
+        naziv: document.getElementById('fNaziv').value.trim(),
+        marka: document.getElementById('fMarka').value.trim(),
+        model: document.getElementById('fModel').value.trim(),
+        cena:  document.getElementById('fCena').value.trim(),
+        opis:  document.getElementById('fOpis').value.trim(),
+        slika: slikaUrl,
+      };
+
+      if (!payload.naziv || !payload.marka || !payload.model) {
+        errEl.textContent = 'Naziv, marka i model su obavezni.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sačuvaj';
+        return;
+      }
+
+      btn.textContent = 'Čuvanje...';
+
+      const isEdit = editingId !== null;
+      const url = isEdit ? `/api/admin/parts/${editingId}` : '/api/admin/parts';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.status === 401) {
+          sessionStorage.removeItem('petronije_token');
+          showLogin();
+          return;
+        }
+
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.error || 'Greška.';
+          errEl.style.display = 'block';
+        } else {
+          sucEl.textContent = isEdit ? 'Deo uspešno izmenjen.' : 'Deo uspešno dodat.';
+          sucEl.style.display = 'block';
+          resetForm();
+          await loadParts();
+          setTimeout(() => { sucEl.style.display = 'none'; }, 3000);
+        }
+      } catch (e) {
+        errEl.textContent = 'Greška u konekciji.';
+        errEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sačuvaj';
+      }
+    }
+
+    // ── Edit ──────────────────────────────────────────────────────────────────
+
+    function startEdit(id) {
+      const part = allParts.find(p => p.id === id);
+      if (!part) return;
+
+      editingId = id;
+      document.getElementById('fNaziv').value = part.naziv;
+      document.getElementById('fMarka').value = part.marka;
+      document.getElementById('fModel').value = part.model;
+      document.getElementById('fCena').value = part.cena || '';
+      document.getElementById('fOpis').value = part.opis || '';
+      document.getElementById('fSlika').value = part.slika || '';
+      document.getElementById('formTitle').textContent = 'Izmeni deo';
+      document.getElementById('saveBtn').textContent = 'Sačuvaj izmene';
+      document.getElementById('cancelBtn').style.display = 'inline-flex';
+      document.getElementById('formError').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'none';
+
+      renderPartsList(allParts);
+      document.querySelector('.form-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.getElementById('cancelBtn').addEventListener('click', resetForm);
+
+    function resetForm() {
+      editingId = null;
+      ['fNaziv','fMarka','fModel','fCena','fOpis','fSlika'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('fSlikaFile').value = '';
+      document.getElementById('uploadLabelText').textContent = 'Odaberi sliku';
+      document.getElementById('imgPreview').style.display = 'none';
+      uploadMode = false;
+      document.getElementById('tabUrl').classList.add('active');
+      document.getElementById('tabUpload').classList.remove('active');
+      document.getElementById('slikaUrlWrap').style.display = '';
+      document.getElementById('slikaUploadWrap').style.display = 'none';
+      document.getElementById('formTitle').textContent = 'Dodaj novi deo';
+      document.getElementById('saveBtn').textContent = 'Sačuvaj';
+      document.getElementById('cancelBtn').style.display = 'none';
+      document.getElementById('formError').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'none';
+      renderPartsList(allParts);
+    }
+
+    // ── Delete ────────────────────────────────────────────────────────────────
+
+    async function deletePart(id) {
+      if (!confirm('Obrisati ovaj deo? Ova radnja je nepovratna.')) return;
+
+      try {
+        const res = await fetch(`/api/admin/parts/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (res.status === 401) {
+          sessionStorage.removeItem('petronije_token');
+          showLogin();
+          return;
+        }
+
+        if (res.ok) {
+          if (editingId === id) resetForm();
+          await loadParts();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    function esc(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

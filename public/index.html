@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Petronije – Auto Delovi, Servis i Vulkanizer</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner container">
+      <div class="logo">
+        <span class="logo-icon">
+          <img src="/logo_white.png" alt="Petronije logo" class="logo-img" />
+        </span>
+        <div class="logo-text">
+          <span class="logo-name">PETRONIJE</span>
+          <span class="logo-sub">Auto delovi &amp; Servis</span>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="#auto-delovi">Auto Delovi</a>
+        <a href="#servisiranje">Servis</a>
+        <a href="#vulkanizer">Vulkanizer</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <a href="tel:+381612399766" class="header-phone">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+        </svg>
+        061/239-9766
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Meni">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container hero-content">
+      <p class="hero-label">Profesionalna usluga od 1998.</p>
+      <h1>Sve za vaš automobil<br/>na jednom mestu</h1>
+      <p class="hero-desc">Prodaja originalnih auto delova, kompletno servisiranje vozila i vulkanizerska usluga. Brzo, pouzdano, po fer cenama.</p>
+      <div class="hero-actions">
+        <a href="#auto-delovi" class="btn btn-primary">Pogledaj delove</a>
+        <a href="#kontakt" class="btn btn-outline">Zakaži servis</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTO DELOVI -->
+  <section class="section" id="auto-delovi">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Prodavnica</div>
+        <h2>Auto Delovi</h2>
+        <p>Originalni i remontovani delovi za Volkswagen vozila. Filtrirajte po modelu da pronađete šta vam treba.</p>
+      </div>
+
+      <div class="parts-filters" id="partsFilters">
+        <div class="filter-group">
+          <label for="filterModel">Model</label>
+          <select id="filterModel">
+            <option value="sve">Svi modeli</option>
+          </select>
+        </div>
+        <button class="btn btn-sm btn-outline" id="resetFilters">Resetuj filter</button>
+      </div>
+
+      <div class="parts-grid" id="partsGrid">
+        <div class="parts-loading">Učitavanje delova...</div>
+      </div>
+
+      <div id="partsEmpty" class="parts-empty" style="display:none;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <p>Nema delova za izabrani filter.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVISIRANJE -->
+  <section class="section section-alt" id="servisiranje">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Usluge</div>
+        <h2>Servisiranje Vozila</h2>
+        <p>Kompletan auto servis — od redovnog održavanja do složenih popravki. Moderni dijagnostički uređaji, iskusni majstori.</p>
+      </div>
+
+      <div class="service-grid">
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://images.pexels.com/photos/8985714/pexels-photo-8985714.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Mehanički servis automobila" loading="lazy" />
+          </div>
+          <div class="service-info">
+            <h3>Mehanički servis</h3>
+            <p>Motor, menjač, kočioni sistem, vešanje, upravljač. Dijagnoza i popravka svih mehaničkih kvarova.</p>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://images.pexels.com/photos/2244746/pexels-photo-2244746.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Auto elektrika i dijagnostika" loading="lazy" />
+          </div>
+          <div class="service-info">
+            <h3>Električni sistemi</h3>
+            <p>Kompjuterska dijagnostika, ABS, ESP, airbag sistemi, klima uređaji, rasveta i elektrika vozila.</p>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://images.pexels.com/photos/3807386/pexels-photo-3807386.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Redovno održavanje vozila" loading="lazy" />
+          </div>
+          <div class="service-info">
+            <h3>Redovno održavanje</h3>
+            <p>Servisni intervali, zamena ulja i filtera, provera kočnica i rashladnog sistema. Brzo i pouzdano.</p>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-img">
+            <img src="https://images.pexels.com/photos/4480505/pexels-photo-4480505.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Priprema za tehnički pregled" loading="lazy" />
+          </div>
+          <div class="service-info">
+            <h3>Tehnički pregled</h3>
+            <p>Priprema vozila za tehnički pregled. Kompletna provera ispravnosti svih sistema.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-cta">
+        <p>Zakažite servis telefonom — odgovaramo svakog radnog dana od 8h do 17h.</p>
+        <a href="tel:+381612399766" class="btn btn-primary">Filip: 061/239-9766</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- VULKANIZER -->
+  <section class="section" id="vulkanizer">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Gume i felge</div>
+        <h2>Vulkanizerska Radnja</h2>
+        <p>Zamena i balansiranje guma, popravka pneumatika, prodaja letnih i zimskih guma. Sve na jednom mestu.</p>
+      </div>
+
+      <div class="vulk-layout">
+        <div class="vulk-services">
+          <div class="vulk-item">
+            <div class="vulk-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a6bcc" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <div>
+              <h4>Zamena guma</h4>
+              <p>Brza zamena sezone — letnje i zimske gume. Balansiranje i montaža.</p>
+            </div>
+          </div>
+          <div class="vulk-item">
+            <div class="vulk-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a6bcc" stroke-width="2">
+                <path d="M12 22V12M12 12L4.5 7.5M12 12L19.5 7.5M4.5 7.5V16.5L12 21M19.5 7.5V16.5L12 21M4.5 7.5L12 3L19.5 7.5"/>
+              </svg>
+            </div>
+            <div>
+              <h4>Popravka pneumatika</h4>
+              <p>Krpljenje pneumatika, zamena ventila, popravka bokova gume.</p>
+            </div>
+          </div>
+          <div class="vulk-item">
+            <div class="vulk-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a6bcc" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div>
+              <h4>Felge i oprema</h4>
+              <p>Čelične i aluminijumske felge, poklopci, vijci, osovinski prsten.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="vulk-images">
+          <div class="vulk-img-big">
+            <img src="https://images.pexels.com/photos/3806249/pexels-photo-3806249.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Zamena guma u vulkanizerskoj radnji" loading="lazy" />
+          </div>
+          <div class="vulk-img-sm">
+            <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Auto delovi i oprema" loading="lazy" />
+          </div>
+          <div class="vulk-img-sm">
+            <img src="https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Felge i gume" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KONTAKT -->
+  <section class="section section-alt" id="kontakt">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Pronađite nas</div>
+        <h2>Kontakt i radno vreme</h2>
+      </div>
+      <div class="kontakt-grid">
+        <div class="kontakt-card">
+          <div class="kontakt-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a6bcc" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+            </svg>
+          </div>
+          <h4>Telefon</h4>
+          <a href="tel:+381612399766">061/239-9766</a>
+          <p style="margin-top:4px;font-size:0.85rem;">Filip</p>
+        </div>
+        <div class="kontakt-card">
+          <div class="kontakt-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a6bcc" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <h4>Adresa</h4>
+          <p>Janičija Đurića 75/5<br/>Aranđelovac, 34300</p>
+        </div>
+        <div class="kontakt-card">
+          <div class="kontakt-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a6bcc" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h4>Radno vreme</h4>
+          <p>Pon–Pet: 08:00–17:00<br/>Subota: 08:00–13:00<br/>Nedeljom: zatvoreno</p>
+        </div>
+      </div>
+
+      <!-- MAPA -->
+      <div class="mapa-wrapper">
+        <div id="mapa"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-name">PETRONIJE</span>
+        <p>Vaš pouzdan partner za auto delove, servisiranje i vulkanizersku uslugu.</p>
+      </div>
+      <div class="footer-links">
+        <h5>Usluge</h5>
+        <a href="#auto-delovi">Auto Delovi</a>
+        <a href="#servisiranje">Servisiranje</a>
+        <a href="#vulkanizer">Vulkanizer</a>
+      </div>
+      <div class="footer-links">
+        <h5>Kontakt</h5>
+        <a href="tel:+381612399766">061/239-9766 (Filip)</a>
+        <span>Janičija Đurića 75/5</span>
+        <span>Aranđelovac, 34300</span>
+        <span>Pon–Pet 08–17h</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <span>&copy; 2025 Petronije. Sva prava zadržana.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Interaktivna mapa — Janičija Đurića 75/5, Aranđelovac
+    var mapa = L.map('mapa').setView([44.3247, 20.5374], 17);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19
+    }).addTo(mapa);
+
+    var ikona = L.divIcon({
+      className: '',
+      html: '<div style="background:#1a6bcc;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.5)"></div>',
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
+    });
+
+    L.marker([44.3247, 20.5374], { icon: ikona })
+      .addTo(mapa)
+      .bindPopup('<strong>Petronije</strong><br>Pavla Milanovića Kezuna 9<br>Aranđelovac, 34300<br><a href="tel:+381612399766">061/239-9766</a>')
+      .openPopup();
+  </script>
+</body>
+</html>
