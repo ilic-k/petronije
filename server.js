@@ -10,7 +10,7 @@ const db = require('./db/init');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'public', 'uploads');
+const uploadDir = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
@@ -31,7 +31,6 @@ const upload = multer({
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(uploadDir));
 
 // In-memory token store { token: expiresAt }
 const tokens = new Map();
