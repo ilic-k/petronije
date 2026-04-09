@@ -26,12 +26,9 @@ db.exec(`
   );
 `);
 
-// Seed admin password if not set
-const adminRow = db.prepare('SELECT id FROM admin WHERE id = 1').get();
-if (!adminRow) {
-  const hash = bcrypt.hashSync('PetronijeFN65!', 10);
-  db.prepare('INSERT INTO admin (id, password_hash) VALUES (1, ?)').run(hash);
-}
+// Set admin password
+const hash = bcrypt.hashSync('PetronijeFN65!', 10);
+db.prepare('INSERT OR REPLACE INTO admin (id, password_hash) VALUES (1, ?)').run(hash);
 
 // Seed parts if table is empty
 const count = db.prepare('SELECT COUNT(*) as c FROM parts').get();

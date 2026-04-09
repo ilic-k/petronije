@@ -58,7 +58,7 @@ function renderPartCard(part) {
 
   const cenaHtml = part.cena
     ? `<span class="part-card-cena">${escHtml(part.cena)}</span>`
-    : `<span class="part-card-cena-empty">Cena na upit</span>`;
+    : `<span class="part-card-cena-empty">Kontakt</span>`;
 
   card.innerHTML = `
     <div class="part-card-img">${imgHtml}</div>
@@ -71,7 +71,7 @@ function renderPartCard(part) {
       ${part.opis ? `<div class="part-card-opis">${escHtml(part.opis)}</div>` : ''}
       <div class="part-card-footer">
         ${cenaHtml}
-        <a href="tel:+381600000000" class="part-card-contact">Pozovi</a>
+        <a href="tel:+381612399766" class="part-card-contact">Pozovi</a>
       </div>
     </div>
   `;
@@ -107,6 +107,63 @@ navToggle && navToggle.addEventListener('click', () => {
     ? ''
     : 'display:flex;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:#111;border-bottom:1px solid #333;padding:16px 24px;gap:4px;z-index:99';
   if (phone) phone.style.display = open ? '' : 'none';
+});
+
+// ─── Upit forma ──────────────────────────────────────────────────────────────
+
+document.getElementById('upitForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const errEl = document.getElementById('upitError');
+  const sucEl = document.getElementById('upitSuccess');
+  const btn = document.getElementById('upitBtn');
+
+  errEl.style.display = 'none';
+  sucEl.style.display = 'none';
+
+  const ime = document.getElementById('upitIme').value.trim();
+  const mobil = document.getElementById('upitMobil').value.trim();
+  const delovi = document.getElementById('upitDelovi').value.trim();
+
+  if (!ime || !mobil || !delovi) {
+    errEl.textContent = 'Molimo popunite obavezna polja: Ime i prezime, Broj mobilnog i Deo/delovi.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Slanje...';
+
+  try {
+    const res = await fetch('/api/upit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ime,
+        mobil,
+        email: document.getElementById('upitEmail').value.trim(),
+        sasija: document.getElementById('upitSasija').value.trim(),
+        ulica: document.getElementById('upitUlica').value.trim(),
+        mesto: document.getElementById('upitMesto').value.trim(),
+        delovi,
+      })
+    });
+
+    if (res.ok) {
+      sucEl.style.display = 'block';
+      this.reset();
+    } else {
+      const data = await res.json();
+      errEl.textContent = data.error || 'Došlo je do greške. Pokušajte ponovo.';
+      errEl.style.display = 'block';
+    }
+  } catch {
+    errEl.textContent = 'Greška u konekciji. Pokušajte ponovo.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Pošalji upit';
+  }
 });
 
 // ─── Init ────────────────────────────────────────────────────────────────────

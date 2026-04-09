@@ -85,6 +85,61 @@
     </div>
   </section>
 
+  <!-- UPIT ZA DEO -->
+  <section class="section upit-section" id="upit-za-deo">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Niste pronašli deo?</div>
+        <h2>Pošaljite upit</h2>
+        <p>Ukoliko deo koji tražite nije u našoj ponudi, kontaktirajte nas — pronalazimo delove i za najzahtevnije modele.</p>
+      </div>
+
+      <div class="upit-wrap">
+        <form class="upit-form" id="upitForm" novalidate>
+          <div class="upit-row">
+            <div class="upit-field">
+              <label for="upitIme">Ime i prezime *</label>
+              <input type="text" id="upitIme" placeholder="Vaše ime i prezime" />
+            </div>
+            <div class="upit-field">
+              <label for="upitMobil">Broj mobilnog *</label>
+              <input type="tel" id="upitMobil" placeholder="06X XXX XXXX" />
+            </div>
+          </div>
+          <div class="upit-row">
+            <div class="upit-field">
+              <label for="upitEmail">Email adresa</label>
+              <input type="email" id="upitEmail" placeholder="vas@email.com" />
+            </div>
+            <div class="upit-field">
+              <label for="upitSasija">Broj šasije (VIN)</label>
+              <input type="text" id="upitSasija" placeholder="17 karaktera" maxlength="17" />
+            </div>
+          </div>
+          <div class="upit-row">
+            <div class="upit-field">
+              <label for="upitUlica">Ulica i broj</label>
+              <input type="text" id="upitUlica" placeholder="Ulica i kućni broj" />
+            </div>
+            <div class="upit-field">
+              <label for="upitMesto">Mesto</label>
+              <input type="text" id="upitMesto" placeholder="Grad ili opština" />
+            </div>
+          </div>
+          <div class="upit-field">
+            <label for="upitDelovi">Deo / delovi koji se traže *</label>
+            <textarea id="upitDelovi" rows="4" placeholder="Navedite naziv dela, broj dela ili opis onoga što vam je potrebno..."></textarea>
+          </div>
+          <div class="upit-error" id="upitError" style="display:none;"></div>
+          <div class="upit-success" id="upitSuccess" style="display:none;">
+            Vaš upit je uspešno primljen. Javićemo vam se u najkraćem roku.
+          </div>
+          <button type="submit" class="btn btn-primary upit-submit" id="upitBtn">Pošalji upit</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <!-- SERVISIRANJE -->
   <section class="section section-alt" id="servisiranje">
     <div class="container">

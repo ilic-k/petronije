@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
+const nodemailer = require('nodemailer');
 
 const db = require('./db/init');
 const app = express();
@@ -176,16 +177,68 @@ app.put('/api/admin/parts/:id', authMiddleware, (req, res) => {
 
 app.delete('/api/admin/parts/:id', authMiddleware, (req, res) => {
   const { id } = req.params;
-  const existing = db.prepare('SELECT id FROM parts WHERE id = ?').get(id);
+  const existing = db.prepare('SELECT slika FROM parts WHERE id = ?').get(id);
   if (!existing) return res.status(404).json({ error: 'Deo nije pronađen' });
+
+  if (existing.slika) {
+    const filename = path.basename(existing.slika);
+    const filepath = path.join(uploadDir, filename);
+    fs.unlink(filepath, () => {});
+  }
 
   db.prepare('DELETE FROM parts WHERE id = ?').run(id);
   res.json({ ok: true });
 });
 
+// ─── Upit za deo ──────────────────────────────────────────────────────────────
+
+app.post('/api/upit', async (req, res) => {
+  const { ime, mobil, email, sasija, ulica, mesto, delovi } = req.body;
+
+  if (!ime || !mobil || !delovi) {
+    return res.status(400).json({ error: 'Obavezna polja nisu popunjena.' });
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    }
+  });
+
+  const tekst = `
+Novi upit za deo — Petronije sajt
+===================================
+
+Ime i prezime:  ${ime}
+Broj mobilnog:  ${mobil}
+Email:          ${email || '—'}
+Broj šasije:    ${sasija || '—'}
+Ulica i broj:   ${ulica || '—'}
+Mesto:          ${mesto || '—'}
+
+Traženi deo/delovi:
+${delovi}
+  `.trim();
+
+  try {
+    await transporter.sendMail({
+      from: `"Petronije Sajt" <${process.env.SMTP_USER}>`,
+      to: 'petronije202@gmail.com',
+      subject: `Upit za deo — ${ime}`,
+      text: tekst,
+    });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('Greška pri slanju maila:', e.message);
+    res.status(500).json({ error: 'Greška pri slanju upita. Pokušajte ponovo.' });
+  }
+});
+
 // ─── Admin Panel (hidden URL) ──────────────────────────────────────────────────
 
-app.get('/admin-petronije-tajna', (req, res) => {
+app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin', 'index.html'));
 });
 

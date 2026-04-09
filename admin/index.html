@@ -300,33 +300,6 @@
       font-size: 0.9rem;
     }
 
-    .slika-tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 8px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .slika-tab {
-      flex: 1;
-      padding: 7px 10px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      background: var(--dark2);
-      color: var(--muted);
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-      transition: 0.15s;
-    }
-
-    .slika-tab.active {
-      background: var(--blue);
-      color: #fff;
-    }
-
     .upload-label {
       display: flex;
       align-items: center;
@@ -350,8 +323,15 @@
     @media (max-width: 800px) {
       .admin-body {
         grid-template-columns: 1fr;
+        padding: 16px 12px;
+        gap: 20px;
       }
       .form-panel { position: static; }
+      .form-row { grid-template-columns: 1fr; }
+      .admin-header { padding: 0 12px; }
+      .admin-header .brand span { display: none; }
+      .admin-part-row { flex-wrap: wrap; }
+      .part-actions { width: 100%; justify-content: flex-end; margin-top: 6px; }
     }
   </style>
 </head>
@@ -393,50 +373,42 @@
 
         <input type="hidden" id="editId" />
 
-        <div class="form-row">
-          <div class="field">
-            <label>Marka *</label>
-            <input type="text" id="fMarka" placeholder="npr. VW" />
-          </div>
-          <div class="field">
-            <label>Model *</label>
-            <input type="text" id="fModel" placeholder="npr. Touran" />
-          </div>
+        <div class="field">
+          <label>Model *</label>
+          <input type="text" id="fModel" placeholder="Golf 7, Passat B6..." />
         </div>
 
         <div class="field">
           <label>Naziv dela *</label>
-          <input type="text" id="fNaziv" placeholder="npr. Prednji amortizer" />
+          <input type="text" id="fNaziv" placeholder="Prednji amortizer" />
         </div>
 
         <div class="field">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="cenaCheck" style="width:auto;cursor:pointer;" />
+            Cena poznata
+          </label>
+        </div>
+        <div class="field" id="cenaField" style="display:none;">
           <label>Cena</label>
-          <input type="text" id="fCena" placeholder="npr. 4.500 RSD" />
+          <input type="text" id="fCena" placeholder="4.500 RSD" />
         </div>
 
         <div class="field">
           <label>Opis</label>
-          <textarea id="fOpis" placeholder="Kratak opis dela..."></textarea>
+          <textarea id="fOpis" placeholder="Opis dela..."></textarea>
         </div>
 
         <div class="field">
           <label>Slika</label>
-          <div class="slika-tabs">
-            <button type="button" class="slika-tab active" id="tabUrl">Link (URL)</button>
-            <button type="button" class="slika-tab" id="tabUpload">Uploaduj sa telefona</button>
-          </div>
-          <div id="slikaUrlWrap">
-            <input type="url" id="fSlika" placeholder="https://..." />
-          </div>
-          <div id="slikaUploadWrap" style="display:none;">
-            <label class="upload-label">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              <span id="uploadLabelText">Odaberi sliku</span>
-            </label>
-            <input type="file" id="fSlikaFile" accept="image/*" style="display:none;" />
-            <div id="imgPreview" style="display:none;margin-top:8px;">
-              <img id="imgPreviewEl" src="" alt="Preview" style="max-width:100%;max-height:140px;border-radius:4px;border:1px solid #333;" />
-            </div>
+          <input type="hidden" id="fSlika" />
+          <label class="upload-label">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span id="uploadLabelText">Odaberi sliku</span>
+          </label>
+          <input type="file" id="fSlikaFile" accept="image/*" style="display:none;" />
+          <div id="imgPreview" style="display:none;margin-top:8px;">
+            <img id="imgPreviewEl" src="" alt="Preview" style="max-width:100%;max-height:140px;border-radius:4px;border:1px solid #333;" />
           </div>
         </div>
 
@@ -588,25 +560,14 @@
       renderPartsList(filtered);
     });
 
-    // ── Slika tabovi i upload ─────────────────────────────────────────────────
+    // ── Cena checkbox ────────────────────────────────────────────────────────
 
-    let uploadMode = false;
-
-    document.getElementById('tabUrl').addEventListener('click', () => {
-      uploadMode = false;
-      document.getElementById('tabUrl').classList.add('active');
-      document.getElementById('tabUpload').classList.remove('active');
-      document.getElementById('slikaUrlWrap').style.display = '';
-      document.getElementById('slikaUploadWrap').style.display = 'none';
+    document.getElementById('cenaCheck').addEventListener('change', function() {
+      document.getElementById('cenaField').style.display = this.checked ? '' : 'none';
+      if (!this.checked) document.getElementById('fCena').value = '';
     });
 
-    document.getElementById('tabUpload').addEventListener('click', () => {
-      uploadMode = true;
-      document.getElementById('tabUpload').classList.add('active');
-      document.getElementById('tabUrl').classList.remove('active');
-      document.getElementById('slikaUploadWrap').style.display = '';
-      document.getElementById('slikaUrlWrap').style.display = 'none';
-    });
+    // ── Upload slike ──────────────────────────────────────────────────────────
 
     document.getElementById('fSlikaFile').addEventListener('change', function() {
       const file = this.files[0];
@@ -620,7 +581,6 @@
       reader.readAsDataURL(file);
     });
 
-    document.getElementById('fSlikaFile').addEventListener('click', () => {});
     document.querySelector('.upload-label').addEventListener('click', () => {
       document.getElementById('fSlikaFile').click();
     });
@@ -658,9 +618,9 @@
       btn.disabled = true;
       btn.textContent = 'Čuvanje...';
 
-      let slikaUrl = document.getElementById('fSlika').value.trim();
+      let slikaUrl = document.getElementById('fSlika').value;
 
-      if (uploadMode && document.getElementById('fSlikaFile').files[0]) {
+      if (document.getElementById('fSlikaFile').files[0]) {
         try {
           btn.textContent = 'Upload slike...';
           slikaUrl = await uploadSlika();
@@ -675,15 +635,15 @@
 
       const payload = {
         naziv: document.getElementById('fNaziv').value.trim(),
-        marka: document.getElementById('fMarka').value.trim(),
+        marka: 'VW',
         model: document.getElementById('fModel').value.trim(),
-        cena:  document.getElementById('fCena').value.trim(),
+        cena:  document.getElementById('cenaCheck').checked ? document.getElementById('fCena').value.trim() : '',
         opis:  document.getElementById('fOpis').value.trim(),
         slika: slikaUrl,
       };
 
-      if (!payload.naziv || !payload.marka || !payload.model) {
-        errEl.textContent = 'Naziv, marka i model su obavezni.';
+      if (!payload.naziv || !payload.model) {
+        errEl.textContent = 'Naziv i model su obavezni.';
         errEl.style.display = 'block';
         btn.disabled = false;
         btn.textContent = 'Sačuvaj';
@@ -740,11 +700,18 @@
 
       editingId = id;
       document.getElementById('fNaziv').value = part.naziv;
-      document.getElementById('fMarka').value = part.marka;
       document.getElementById('fModel').value = part.model;
+      const hasCena = !!part.cena;
+      document.getElementById('cenaCheck').checked = hasCena;
+      document.getElementById('cenaField').style.display = hasCena ? '' : 'none';
       document.getElementById('fCena').value = part.cena || '';
       document.getElementById('fOpis').value = part.opis || '';
       document.getElementById('fSlika').value = part.slika || '';
+      if (part.slika) {
+        document.getElementById('imgPreviewEl').src = part.slika;
+        document.getElementById('imgPreview').style.display = 'block';
+        document.getElementById('uploadLabelText').textContent = 'Promeni sliku';
+      }
       document.getElementById('formTitle').textContent = 'Izmeni deo';
       document.getElementById('saveBtn').textContent = 'Sačuvaj izmene';
       document.getElementById('cancelBtn').style.display = 'inline-flex';
@@ -759,17 +726,14 @@
 
     function resetForm() {
       editingId = null;
-      ['fNaziv','fMarka','fModel','fCena','fOpis','fSlika'].forEach(id => {
+      ['fNaziv','fModel','fCena','fOpis','fSlika'].forEach(id => {
         document.getElementById(id).value = '';
       });
+      document.getElementById('cenaCheck').checked = false;
+      document.getElementById('cenaField').style.display = 'none';
       document.getElementById('fSlikaFile').value = '';
       document.getElementById('uploadLabelText').textContent = 'Odaberi sliku';
       document.getElementById('imgPreview').style.display = 'none';
-      uploadMode = false;
-      document.getElementById('tabUrl').classList.add('active');
-      document.getElementById('tabUpload').classList.remove('active');
-      document.getElementById('slikaUrlWrap').style.display = '';
-      document.getElementById('slikaUploadWrap').style.display = 'none';
       document.getElementById('formTitle').textContent = 'Dodaj novi deo';
       document.getElementById('saveBtn').textContent = 'Sačuvaj';
       document.getElementById('cancelBtn').style.display = 'none';
