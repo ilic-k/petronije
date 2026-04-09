@@ -199,12 +199,19 @@ app.post('/api/upit', async (req, res) => {
     return res.status(400).json({ error: 'Obavezna polja nisu popunjena.' });
   }
 
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    return res.status(500).json({ error: 'Email nije konfigurisan na serveru.' });
+  }
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
-    }
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 
   const tekst = `
