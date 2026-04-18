@@ -1,9 +1,15 @@
 // ─── Parts Catalog ──────────────────────────────────────────────────────────
 
+const INITIAL_COUNT = 8;
+
 const grid = document.getElementById('partsGrid');
 const empty = document.getElementById('partsEmpty');
 const selModel = document.getElementById('filterModel');
 const btnReset = document.getElementById('resetFilters');
+const showMoreWrap = document.getElementById('partsShowMore');
+const btnShowMore = document.getElementById('btnShowMore');
+
+let allParts = [];
 
 async function loadModels() {
   try {
@@ -29,25 +35,48 @@ async function loadParts() {
 
   grid.innerHTML = '<div class="parts-loading">Učitavanje...</div>';
   empty.style.display = 'none';
+  showMoreWrap.style.display = 'none';
 
   try {
     const res = await fetch('/api/parts?' + params.toString());
-    const parts = await res.json();
+    allParts = await res.json();
 
     grid.innerHTML = '';
 
-    if (!parts.length) {
+    if (!allParts.length) {
       empty.style.display = 'block';
       return;
     }
 
-    for (const part of parts) {
+    const filtered = model !== 'sve';
+    const toShow = filtered ? allParts : allParts.slice(0, INITIAL_COUNT);
+
+    for (const part of toShow) {
       grid.appendChild(renderPartCard(part));
+    }
+
+    if (!filtered && allParts.length > INITIAL_COUNT) {
+      showMoreWrap.style.display = 'block';
     }
   } catch (e) {
     grid.innerHTML = '<div class="parts-loading">Greška pri učitavanju delova.</div>';
   }
 }
+
+btnShowMore.addEventListener('click', () => {
+  const already = grid.children.length;
+  for (let i = already; i < allParts.length; i++) {
+    grid.appendChild(renderPartCard(allParts[i]));
+  }
+  showMoreWrap.style.display = 'none';
+});
+
+selModel.addEventListener('change', loadParts);
+
+btnReset.addEventListener('click', () => {
+  selModel.value = 'sve';
+  loadParts();
+});
 
 function renderPartCard(part) {
   const card = document.createElement('div');
@@ -87,13 +116,6 @@ function escHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
-
-selModel.addEventListener('change', loadParts);
-
-btnReset.addEventListener('click', () => {
-  selModel.value = 'sve';
-  loadParts();
-});
 
 // ─── Mobile nav ─────────────────────────────────────────────────────────────
 
