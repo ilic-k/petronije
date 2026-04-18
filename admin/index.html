@@ -595,6 +595,12 @@
         headers: { 'Authorization': 'Bearer ' + token },
         body: fd
       });
+      if (res.status === 401) {
+        sessionStorage.removeItem('petronije_token');
+        token = null;
+        showLogin();
+        throw new Error('SESSION_EXPIRED');
+      }
       if (!res.ok) {
         let msg = 'Upload slike nije uspeo (' + res.status + ')';
         try { const d = await res.json(); if (d.error) msg = d.error; } catch {}
@@ -625,6 +631,7 @@
           btn.textContent = 'Upload slike...';
           slikaUrl = await uploadSlika();
         } catch (e) {
+          if (e.message === 'SESSION_EXPIRED') return;
           errEl.textContent = 'Greška pri uploadu slike: ' + e.message;
           errEl.style.display = 'block';
           btn.disabled = false;
@@ -707,10 +714,15 @@
       document.getElementById('fCena').value = part.cena || '';
       document.getElementById('fOpis').value = part.opis || '';
       document.getElementById('fSlika').value = part.slika || '';
+      document.getElementById('fSlikaFile').value = '';
       if (part.slika) {
         document.getElementById('imgPreviewEl').src = part.slika;
         document.getElementById('imgPreview').style.display = 'block';
         document.getElementById('uploadLabelText').textContent = 'Promeni sliku';
+      } else {
+        document.getElementById('imgPreview').style.display = 'none';
+        document.getElementById('imgPreviewEl').src = '';
+        document.getElementById('uploadLabelText').textContent = 'Odaberi sliku';
       }
       document.getElementById('formTitle').textContent = 'Izmeni deo';
       document.getElementById('saveBtn').textContent = 'Sačuvaj izmene';
