@@ -41,7 +41,18 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-bg"></div>
+    <div class="hero-bg">
+      <img class="hero-slide active" src="/images/hero-slide-1.png" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-2.png" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-3.png" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-4.jpeg" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-5.jpg" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-6.jpg" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-7.jpeg" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-8.jpg" alt="" />
+      <img class="hero-slide" src="/images/hero-slide-9.jpeg" alt="" />
+      <div class="hero-overlay"></div>
+    </div>
     <div class="container hero-content">
       <p class="hero-label">Polovni VW delovi i servisiranje</p>
       <h1>Auto servis, montaža i balansiranje guma<br/>VW Auto Delovi Filip</h1>
@@ -387,6 +398,17 @@
       .addTo(mapa)
       .bindPopup('<strong>Petronije</strong><br>Pavla Milanovića Kezuna 9<br>Aranđelovac, 34300<br><a href="tel:+381612399766">061/239-9766</a>')
       .openPopup();
+  </script>
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.hero-slide');
+      let current = 0;
+      setInterval(function() {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+      }, 4500);
+    })();
   </script>
 </body>
 </html>
